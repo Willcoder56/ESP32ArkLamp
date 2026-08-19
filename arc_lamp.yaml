@@ -1,0 +1,126 @@
+esphome:
+  name: arc-lamp
+  friendly_name: Arc Lamp
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+logger:
+
+api:
+
+ota:
+  platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # Falls back to its own hotspot if it can't find configured wifi
+  # (e.g. at college) - lamp still runs fully standalone either way.
+  ap:
+    ssid: "ArcLamp Fallback"
+    password: "12345678"
+
+captive_portal:
+
+i2c:
+  sda: GPIO8
+  scl: GPIO9
+  scan: true
+
+uart:
+  id: ld2410_uart
+  tx_pin: GPIO18
+  rx_pin: GPIO17
+  baud_rate: 256000
+
+# --- WS2815 arc strip ---
+light:
+  - platform: esp32_rmt_led_strip
+    id: arc_light
+    name: "Arc Lamp"
+    pin: GPIO4
+    num_leds: 120
+    rmt_channel: 0
+    chipset: WS2812   # WS2815 uses the same data protocol/timing
+    rgb_order: GRB
+    default_transition_length: 300ms
+    effects:
+      - addressable_rainbow:
+      - addressable_color_wipe:
+      - pulse:
+
+# --- LD2410B presence radar ---
+ld2410:
+  id: ld2410_radar
+
+# --- MPR121 capacitive touch ---
+mpr121:
+  id: touch_pads
+  address: 0x5A
+
+binary_sensor:
+  # Presence -> auto on/off
+  - platform: ld2410
+    has_target:
+      name: "Presence"
+      id: presence_sensor
+      on_press:
+        then:
+          - light.turn_on: arc_light
+      on_release:
+        then:
+          - light.turn_off: arc_light
+
+  # Touch pads -> 5 brightness presets
+  - platform: mpr121
+    channel: 0
+    name: "Touch Pad 1"
+    on_press:
+      then:
+        - light.turn_on:
+            id: arc_light
+            brightness: 20%
+  - platform: mpr121
+    channel: 1
+    name: "Touch Pad 2"
+    on_press:
+      then:
+        - light.turn_on:
+            id: arc_light
+            brightness: 40%
+  - platform: mpr121
+    channel: 2
+    name: "Touch Pad 3"
+    on_press:
+      then:
+        - light.turn_on:
+            id: arc_light
+            brightness: 60%
+  - platform: mpr121
+    channel: 3
+    name: "Touch Pad 4"
+    on_press:
+      then:
+        - light.turn_on:
+            id: arc_light
+            brightness: 80%
+  - platform: mpr121
+    channel: 4
+    name: "Touch Pad 5"
+    on_press:
+      then:
+        - light.turn_on:
+            id: arc_light
+            brightness: 100%
+
+sensor:
+  - platform: ld2410
+    moving_distance:
+      name: "Moving Distance"
+    still_distance:
+      name: "Still Distance"
+    detection_distance:
+      name: "Detection Distance"
