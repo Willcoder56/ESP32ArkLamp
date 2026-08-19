@@ -18,7 +18,6 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
   # Falls back to its own hotspot if it can't find configured wifi
-  # (e.g. at college) - lamp still runs fully standalone either way.
   ap:
     ssid: "ArcLamp Fallback"
     password: "12345678"
@@ -42,7 +41,7 @@ light:
     id: arc_light
     name: "Arc Lamp"
     pin: GPIO4
-    num_leds: 120
+    num_leds: 105
     rmt_channel: 0
     chipset: WS2812   # WS2815 uses the same data protocol/timing
     rgb_order: GRB
