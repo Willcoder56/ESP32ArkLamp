@@ -9,7 +9,7 @@
 <h1 align="center">Arc Lamp</h1>
 
 <p align="center">
-  A presence-aware, touch-dimmable LED arc lamp built on the ESP32-S3 — powered entirely over USB-C PD.
+  A USB-C PD-powered desk lamp for building stupid projects.
 </p>
 
 <p align="center">
@@ -20,10 +20,9 @@
   <img alt="PRs" src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square">
 </p>
 
-Most desk lamps are either a dumb switch or a cloud-locked "smart" bulb. Arc
-Lamp auto-adjusts to presence, dims via touch, and runs its full feature set
-completely offline — the ESP32-S3 handles sensing and light logic locally, with
-Home Assistant as an optional bonus layer rather than a dependency.
+An arc-style desktop lamp built to clip onto the 120 cm IKEA Berglärka desk.
+Features smart home integration with presence detection and capacitive touch dimming
+
 
 ## Table of contents
 
@@ -40,11 +39,11 @@ Home Assistant as an optional bonus layer rather than a dependency.
 
 | Feature | Description |
 | :--- | :--- |
-| Addressable RGBW arc | WS2815 strip inside a diffused silicone channel for continuous, soft glow |
-| Presence-aware | LD2410B mmWave radar detects stationary presence, not just motion — auto on/off |
-| Touch dimming | MPR121 capacitive pads set brightness in five steps, no mechanical switch |
-| USB-C powered | CH224K negotiates 12V PD from any compatible charger or hub |
-| Works fully offline | All automations run on-device; no hub or internet required |
+| Addressable RGBW arc | WS2815 strip inside a diffused silicone channel |
+| Presence-aware | LD2410B mmWave radar for presence detection |
+| Touch dimming | MPR121 capacitive pads to set brightness |
+| USB-C powered | CH224K negotiates 12v on compatibale chargers |
+| Works fully offline | For when you forget to pay the internet bill |
 | Home Assistant ready | Auto-discovered over the native ESPHome API when Wi-Fi is available |
 
 ## Demo
@@ -53,15 +52,15 @@ Home Assistant as an optional bonus layer rather than a dependency.
   <img alt="Arc Lamp demo" src="docs/images/demo.gif" width="640">
 </p>
 
-<sub>Touch dimming and presence auto-on shown above. Replace with your own capture once assembled.</sub>
+<sub>If you're seeing this, I forgot to remove this, or I haven't finished building this project (Sorry).</sub>
 
 ## Hardware
 
 | Part | Role |
 | :---: | :--- |
 | ESP32-S3 DevKitC-1 (N16R8) | Main controller |
-| WS2815 RGBW LED strip, 12V, 60/m, 2m | Light source |
-| Silicone diffuser channel | Housing / light diffusion |
+| WS2815 RGBW LED strip, 12V, 60/m, 1.75m | Light source |
+| Silicone diffuser channel | Light diffusion (Shocker) |
 | CH224K | USB-C PD trigger, negotiates 12V |
 | LM2596 | Buck converter, 12V → 5V |
 | HLK-LD2410B | 24GHz mmWave presence radar |
@@ -94,10 +93,7 @@ esphome run arc_lamp.yaml
 <summary><b>Standalone / no Wi-Fi at hand</b></summary>
 
 If the lamp can't find the configured network on boot, it opens a local
-`ArcLamp Fallback` access point instead of blocking. Every onboard automation
-— touch dimming, presence detection, auto-brightness — keeps running with zero
-functional loss. Wi-Fi only adds remote control and Home Assistant discovery
-on top.
+`ArcLamp Fallback` access point instead of blocking.
 
 </details>
 
@@ -110,7 +106,7 @@ Edit the relevant fields directly in `arc_lamp.yaml`:
 light:
   - platform: esp32_rmt_led_strip
     pin: GPIO4          # change if rewiring the data line
-    num_leds: 120        # match to your trimmed strip length
+    num_leds: 105        # match to your trimmed strip length
 ```
 
 If you trim the strip while building the housing, `num_leds` must match the
