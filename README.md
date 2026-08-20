@@ -94,9 +94,7 @@ esphome run arc_lamp.yaml
 <summary><b>Standalone / no Wi-Fi at hand</b></summary>
 
 If the lamp can't find the configured network on boot, it opens a local
-`ArcLamp Fallback` access point instead of blocking. Every onboard automation
-— touch dimming, presence detection, auto-brightness — keeps running with zero
-functional loss. Wi-Fi only adds remote control and Home Assistant discovery
+`ArcLamp Fallback` access point instead of blocking. Wi-Fi only adds remote control and Home Assistant discovery
 on top.
 
 </details>
