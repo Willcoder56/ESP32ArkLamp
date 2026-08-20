@@ -9,7 +9,7 @@
 <h1 align="center">Arc Lamp</h1>
 
 <p align="center">
-  A USB-C PD-powered desk lamp for building stupid projects.
+  A USB-C PD-powered Arc Lamp built for the IKEA Berglärka desk.
 </p>
 
 <p align="center">
@@ -20,9 +20,7 @@
   <img alt="PRs" src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square">
 </p>
 
-An arc-style desktop lamp built to clip onto the 120 cm IKEA Berglärka desk.
-Features smart home integration with presence detection and capacitive touch dimming
-
+I wanted to build this project as the ultimate lamp featuring 5-pad capacitive touch dimming, mm-Wave presence detection, auto-set brightness, and smart home integration.
 
 ## Table of contents
 
@@ -32,6 +30,7 @@ Features smart home integration with presence detection and capacitive touch dim
 - [Installation](#installation)
 - [Usage](#usage)
 - [Wiring](#wiring)
+- [Build instructions](#build-instructions)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -39,12 +38,13 @@ Features smart home integration with presence detection and capacitive touch dim
 
 | Feature | Description |
 | :--- | :--- |
-| Addressable RGBW arc | WS2815 strip inside a diffused silicone channel |
-| Presence-aware | LD2410B mmWave radar for presence detection |
-| Touch dimming | MPR121 capacitive pads to set brightness |
-| USB-C powered | CH224K negotiates 12v on compatibale chargers |
-| Works fully offline | For when you forget to pay the internet bill |
-| Home Assistant ready | Auto-discovered over the native ESPHome API when Wi-Fi is available |
+| Addressable RGBW arc | WS2815 strip inside a diffused silicone channe |
+| Presence-aware | LD2410B mmWave radar detects presence |
+| Ambient-aware brightness | BH1750 light sensor scales auto-on brightness to how dark the room already is |
+| Touch dimming | MPR121 capacitive pads set brightness in five steps |
+| USB-C powered | CH224K negotiates 12V PD from any compatible charger or hub |
+| Works fully offline | All automations run on-device; no hub or internet required |
+| Home Assistant ready | Auto-discovered over the native ESPHome API |
 
 ## Demo
 
@@ -52,19 +52,20 @@ Features smart home integration with presence detection and capacitive touch dim
   <img alt="Arc Lamp demo" src="docs/images/demo.gif" width="640">
 </p>
 
-<sub>If you're seeing this, I forgot to remove this, or I haven't finished building this project (Sorry).</sub>
+<sub>If you're seeing this, I forgot to delete it, or I haven't finished the physical device.</sub>
 
 ## Hardware
 
 | Part | Role |
 | :---: | :--- |
-| ESP32-S3 DevKitC-1 (N16R8) | Main controller |
-| WS2815 RGBW LED strip, 12V, 60/m, 1.75m | Light source |
-| Silicone diffuser channel | Light diffusion (Shocker) |
+| ESP32-S3 DevKitC-1 (N16R8) | Microcontroller |
+| WS2815 RGBW LED strip, 12V, 60/m, 2m | Light source |
+| Silicone diffuser channel | light diffusion |
 | CH224K | USB-C PD trigger, negotiates 12V |
 | LM2596 | Buck converter, 12V → 5V |
 | HLK-LD2410B | 24GHz mmWave presence radar |
 | MPR121 | 5-pad capacitive touch controller |
+| BH1750 | Ambient light sensor (I2C, shares the bus with MPR121) |
 
 Full net-by-net pin map lives in [`docs/wiring.md`](docs/wiring.md).
 
@@ -72,8 +73,8 @@ Full net-by-net pin map lives in [`docs/wiring.md`](docs/wiring.md).
 
 ```bash
 pip install esphome
-git clone https://github.com/yourusername/arc-lamp.git
-cd arc-lamp
+git clone https://github.com/Willcoder56/ESP32ArkLamp.git
+cd ESP32ArkLamp
 ```
 
 Create a `secrets.yaml` in the project root:
@@ -93,7 +94,10 @@ esphome run arc_lamp.yaml
 <summary><b>Standalone / no Wi-Fi at hand</b></summary>
 
 If the lamp can't find the configured network on boot, it opens a local
-`ArcLamp Fallback` access point instead of blocking.
+`ArcLamp Fallback` access point instead of blocking. Every onboard automation
+— touch dimming, presence detection, auto-brightness — keeps running with zero
+functional loss. Wi-Fi only adds remote control and Home Assistant discovery
+on top.
 
 </details>
 
@@ -133,8 +137,7 @@ automation:
           message: "Arc Lamp is on"
 ```
 
-No Home Assistant instance is required for the lamp itself to function — touch
-pads and presence detection work standalone out of the box.
+No Home Assistant instance is required for the lamp itself to function 
 
 ## Wiring
 
@@ -143,21 +146,27 @@ pads and presence detection work standalone out of the box.
 | WS2815 data | GPIO4 |
 | LD2410B UART RX / TX | GPIO17 / GPIO18 |
 | MPR121 I2C SDA / SCL | GPIO8 / GPIO9 |
+| BH1750 I2C SDA / SCL | GPIO8 / GPIO9 (shared bus with MPR121) |
 
 ```
 USB-C PD source → CH224K (12V) ──┬─→ WS2815 strip (12V)
                                   └─→ LM2596 buck → 5V → ESP32-S3, LD2410B
-ESP32-S3 3V3 → MPR121
+ESP32-S3 3V3 → MPR121, BH1750
 ```
 
 Full power/signal net map, decoupling recommendations, and per-module pin
 tables: [`docs/wiring.md`](docs/wiring.md).
 
+## Build instructions
+
+Assembly order, perfboard layout tips, and how not to let the magic smoke out
+of your CH224K: [`docs/BUILD.md`](docs/BUILD.md).
+
 ## Contributing
 
 Issues and pull requests are welcome — this is a personal desk project, so
 response time may vary, but fixes, wiring corrections, and firmware
-improvements are genuinely appreciated.
+improvements are appreciated.
 
 1. Fork the repo
 2. Create a branch (`git checkout -b fix/thing`)
