@@ -12,7 +12,7 @@ Full net and pin map for schematic capture / point-to-point wiring.
 | `+3V3` | ESP32-S3 onboard 3V3 regulator | MPR121 VDD, BH1750 VCC |
 | `GND` | Common | All modules |
 
-Add a ~2A fuse or polyfuse between `VBUS_IN` and CH224K IN, a bulk 100–220µF
+Add a ~2A fuse or ppt polyfuse between `VBUS_IN` and CH224K IN, a bulk 100–220µF
 electrolytic on `+12V` near the strip header, and a 100nF decoupling cap at the
 VDD/VIN pin of each IC.
 
@@ -98,7 +98,7 @@ parallel.
 <details>
 <summary><b>Power budget notes</b></summary>
 
-At 120 LEDs full white, the WS2815 strip can draw several amps. Size the 12V
+At 05 LEDs full white, the WS2815 strip can draw several amps. Size the 12V
 wiring/traces for worst-case current even though typical desk-lamp brightness
 levels draw far less. Keep the strip's 12V/GND runs short and thick, or feed
 power at both ends of the strip if the arc is long, to avoid voltage sag and
